@@ -1,0 +1,14 @@
+[Unit]
+Description=sgservice-proxy Server
+After=syslog.target network.target
+
+[Service]
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=0
+Restart=always
+User=root
+ExecStart=/usr/bin/sgservice-proxy --config-file /etc/sgservice/sgservice-proxy.conf
+
+[Install]
+WantedBy=multi-user.target

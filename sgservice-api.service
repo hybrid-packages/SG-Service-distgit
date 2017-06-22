@@ -1,0 +1,14 @@
+[Unit]
+Description=SG Service API Server
+After=syslog.target network.target
+
+[Service]
+Type=notify
+NotifyAccess=all
+TimeoutStartSec=0
+Restart=always
+User=root
+ExecStart=/usr/bin/sgservice-api --config-file /etc/sgservice/sgservice-api.conf
+
+[Install]
+WantedBy=multi-user.target

@@ -12,52 +12,58 @@ License:        ASL 2.0
 URL:            https://github.com/Hybrid-Cloud/SG-Service
 Source0:        https://github.com/Hybrid-Cloud/%{name}/%{name}-%{upstream_version}.tar.gz
 
-Source1:        sgservice-dist.conf
 Source2:        sgservice.logrotate
 Source3:        sgservice.sudoers
 
 Source10:       sgservice-api.service
 Source11:       sgservice-controller.service
-Source12:       sgservice-manage.service
 Source13:       sgservice-proxy.service
 
 BuildArch:      noarch
 BuildRequires:  intltool
 BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
-BuildRequires:  python-pbr
-BuildRequires:  python-d2to1
 BuildRequires:  python-crypto
 BuildRequires:  python-cryptography
-BuildRequires:  python-sgservice-caaclient
-BuildRequires:  python-decorator
 BuildRequires:  python-cinderclient
 BuildRequires:  python-glanceclient
 BuildRequires:  python-greenlet
-BuildRequires:  python-heatclient
-BuildRequires:  python-iso8601
 BuildRequires:  python-keystoneclient
-BuildRequires:  python-keystonemiddleware
 BuildRequires:  python-lxml
 BuildRequires:  python-neutronclient
-BuildRequires:  python-novaclient
-BuildRequires:  python-oslo-cache
-BuildRequires:  python-oslo-concurrency
-BuildRequires:  python-oslo-config
-BuildRequires:  python-oslo-context
-BuildRequires:  python-oslo-db
-BuildRequires:  python-oslo-config
-BuildRequires:  python-oslo-log
-BuildRequires:  python-oslo-messaging
-BuildRequires:  python-osprofiler
-BuildRequires:  python-oslo-middleware
-BuildRequires:  python-oslo-policy
-BuildRequires:  python-oslo-reports
-BuildRequires:  python-oslo-serialization
-BuildRequires:  python-oslo-service
-BuildRequires:  python-oslo-utils
-BuildRequires:  python-oslo-versionedobjects
-BuildRequires:  PyYAML
+BuildRequires:   python-pbr
+BuildRequires:   python-Babel
+BuildRequires:   python-croniter
+BuildRequires:   python-eventlet
+BuildRequires:   python-greenlet
+BuildRequires:   python-keystonemiddleware
+BuildRequires:   python-oslo.config
+BuildRequires:   python-oslo.concurrency
+BuildRequires:   python-oslo.context
+BuildRequires:   python-oslo.db
+BuildRequires:   python-oslo.log
+BuildRequires:   python-oslo.messaging
+BuildRequires:   python-oslo.middleware
+BuildRequires:   python-oslo.policy
+BuildRequires:   python-oslo.serialization
+BuildRequires:   python-oslo.service
+BuildRequires:   python-oslo.versionedobjects
+BuildRequires:   python-Paste
+BuildRequires:   python-PasteDeploy
+BuildRequires:   python-requests
+BuildRequires:   python-Routes
+BuildRequires:   python-six
+BuildRequires:   python-WebOb
+BuildRequires:   python-oslo.i18n
+BuildRequires:   python-SQLAlchemy
+BuildRequires:   python-sqlalchemy-migrate
+BuildRequires:   python-grpcio
+BuildRequires:   python-netifaces
+BuildRequires:   pyparsing
+BuildRequires:   python-cinderclient
+BuildRequires:   python-novaclient
+BuildRequires:   pymysql
+BuildRequires:  python-oslo-rootwrap
 
 Requires:       python-%{pypi_name} = %{epoch}:%{version}-%{release}
 
@@ -123,8 +129,8 @@ Requires:       python-stevedore >= 1.5.0
 Requires:       python-suds
 Requires:       python-webob >= 1.2.3
 Requires:       pytz
-Requires:       grpcio >= 1.0.4
-Requires:       netifaces >= 0.10.5
+Requires:       python-grpcio >= 1.0.4
+Requires:       python-netifaces >= 0.10.5
 Requires:       pyparsing >= 2.2.0 
 Requires:       python-cinderclient >= 2.0.1
 Requires:       python-novaclient >= 7.1.0
@@ -164,23 +170,25 @@ rm -rf {test-,}requirements.txt tools/{pip,test}-requires
 %{__python2} setup.py install -O1 --skip-build --root %{buildroot}
 
 # Setup directories
+#install -d -m 750 %{buildroot}%{_sysconfdir}/sgservice/rootwrap.d
 install -d -m 750 %{buildroot}%{_sysconfdir}/sgservice
 install -d -m 750 %{buildroot}%{_localstatedir}/log/sgservice
 install -d -m 755 %{buildroot}%{_sharedstatedir}/sgservice
 
 # Install config files
-install -p -D -m 640 %{SOURCE1} %{buildroot}%{_datarootdir}/sgservice/sgservice-dist.conf
-install -p -D -m 755 etc/sgservice.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice.conf
+#install -p -D -m 640 %{SOURCE1} %{buildroot}%{_datarootdir}/sgservice/sgservice-dist.conf
+#install -p -D -m 755 etc/sgservice.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice.conf
 install -p -D -m 755 etc/sgservice_api.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice_api.conf
 install -p -D -m 755 etc/sgservice_controller.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice_controller.conf
 install -p -D -m 755 etc/sgservice_proxy.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice_proxy.conf
 install -p -D -m 755 etc/api-paste.ini %{buildroot}%{_sysconfdir}/sgservice/api-paste.ini
 install -p -D -m 755 etc/policy.json %{buildroot}%{_sysconfdir}/sgservice/policy.json
+#install -p -D -m 755 etc/sgservice/rootwrap.conf %{buildroot}%{_sysconfdir}/sgservice/rootwrap.conf
+#install -p -D -m 755 etc/sgservice/rootwrap.d/*.filters %{buildroot}%{_sysconfdir}/sgservice/rootwrap.d
 
 # Install initscripts for sgservice services
 install -p -D -m 644 %{SOURCE10} %{buildroot}%{_unitdir}/sgservice-api.service
 install -p -D -m 644 %{SOURCE11} %{buildroot}%{_unitdir}/sgservice-controller.service
-install -p -D -m 644 %{SOURCE12} %{buildroot}%{_unitdir}/sgservice-manage.service
 install -p -D -m 644 %{SOURCE13} %{buildroot}%{_unitdir}/sgservice-proxy.service
 
 # Install sudoers
@@ -207,24 +215,21 @@ exit 0
 %post
 %systemd_post sgservice-api
 %systemd_post sgservice-controller
-%systemd_post sgservice-manage
 %systemd_post sgservice-proxy
 
 %preun
 %systemd_preun sgservice-api
 %systemd_preun sgservice-controller
-%systemd_preun sgservice-manage
 %systemd_preun sgservice-proxy
 
 %postun
 %systemd_postun_with_restart sgservice-api
 %systemd_postun_with_restart sgservice-controller
-%systemd_postun_with_restart sgservice-manage
 %systemd_postun_with_restart sgservice-proxy
 
 %files
 %dir %{_sysconfdir}/sgservice
-%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice.conf
+#%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice.conf
 %config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice_api.conf
 %config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice_controller.conf
 %config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice_proxy.conf

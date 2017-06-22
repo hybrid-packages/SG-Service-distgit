@@ -1,0 +1,3 @@
+Defaults:sgservice !requiretty
+
+sgservice ALL = (root) NOPASSWD: /usr/bin/sgservice-rootwrap /etc/sgservice/rootwrap.conf *
