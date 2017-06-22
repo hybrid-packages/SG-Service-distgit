@@ -25,7 +25,6 @@ BuildRequires:  python2-devel
 BuildRequires:  python-setuptools
 BuildRequires:  python-crypto
 BuildRequires:  python-cryptography
-BuildRequires:  python-cinderclient
 BuildRequires:  python-glanceclient
 BuildRequires:  python-greenlet
 BuildRequires:  python-keystoneclient
@@ -62,7 +61,7 @@ BuildRequires:   pyparsing
 BuildRequires:   python-cinderclient
 BuildRequires:   python-novaclient
 #BuildRequires:   pymysql
-BuildRequires:   python-oslo-rootwrap
+#BuildRequires:   python-oslo-rootwrap
 
 Requires:       python-%{pypi_name} = %{epoch}:%{version}-%{release}
 
@@ -107,7 +106,7 @@ Requires:       python-oslo-messaging >= 2.1.0
 Requires:       python-oslo-middleware >= 3.0.0
 Requires:       python-oslo-policy >= 0.5.0
 Requires:       python-oslo-reports >= 0.6.0
-Requires:       python-oslo-rootwrap >= 0.6.0
+#Requires:       python-oslo-rootwrap >= 0.6.0
 Requires:       python-oslo-serialization >= 2.1.0
 Requires:       python-oslo-service >= 1.0.0
 Requires:       python-oslo-utils >= 3.4.0
@@ -129,12 +128,11 @@ Requires:       python-suds
 Requires:       python-webob >= 1.2.3
 Requires:       pytz
 #Requires:       grpcio >= 1.0.4
-Requires:       python-netifaces >= 0.10.5
-Requires:       pyparsing >= 2.2.0 
-Requires:       python-cinderclient >= 2.0.1
+Requires:       python-netifaces >= 0.10.4
+Requires:       pyparsing >= 2.0.7
+Requires:       python-cinderclient >= 1.6.0
 Requires:       python-novaclient >= 7.1.0
 #Requires:       pymysql >= 0.7.10
-Requires:       keystonemiddleware >= 4.2.0
 
 %description -n python-%{pypi_name}
 SG-Service Code
@@ -173,13 +171,14 @@ rm -rf {test-,}requirements.txt tools/{pip,test}-requires
 install -d -m 750 %{buildroot}%{_sysconfdir}/sgservice
 install -d -m 750 %{buildroot}%{_localstatedir}/log/sgservice
 install -d -m 755 %{buildroot}%{_sharedstatedir}/sgservice
+install -d -m 755 %{buildroot}%{_datadir}/sgservice
 
 # Install config files
 #install -p -D -m 640 %{SOURCE1} %{buildroot}%{_datarootdir}/sgservice/sgservice-dist.conf
-#install -p -D -m 755 etc/sgservice.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice.conf
-install -p -D -m 755 etc/sgservice_api.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice_api.conf
-install -p -D -m 755 etc/sgservice_controller.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice_controller.conf
-install -p -D -m 755 etc/sgservice_proxy.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice_proxy.conf
+install -p -D -m 755 etc/sgservice.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice.conf
+install -p -D -m 755 etc/sgservice-api.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice-api.conf
+install -p -D -m 755 etc/sgservice-controller.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice-controller.conf
+install -p -D -m 755 etc/sgservice-proxy.conf %{buildroot}%{_sysconfdir}/sgservice/sgservice-proxy.conf
 install -p -D -m 755 etc/api-paste.ini %{buildroot}%{_sysconfdir}/sgservice/api-paste.ini
 install -p -D -m 755 etc/policy.json %{buildroot}%{_sysconfdir}/sgservice/policy.json
 #install -p -D -m 755 etc/sgservice/rootwrap.conf %{buildroot}%{_sysconfdir}/sgservice/rootwrap.conf
@@ -228,16 +227,16 @@ exit 0
 
 %files
 %dir %{_sysconfdir}/sgservice
-#%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice.conf
-%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice_api.conf
-%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice_controller.conf
-%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice_proxy.conf
+%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice.conf
+%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice-api.conf
+%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice-controller.conf
+%config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/sgservice-proxy.conf
 %config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/api-paste.ini
 %config(noreplace) %attr(-, root, sgservice) %{_sysconfdir}/sgservice/policy.json
 %config(noreplace) %{_sysconfdir}/logrotate.d/sgservice
 %config(noreplace) %{_sysconfdir}/sudoers.d/sgservice
-%{_sysconfdir}/sgservice/rootwrap.d/
-%attr(-, root, sgservice) %{_datadir}/sgservice/sgservice-dist.conf
+#%{_sysconfdir}/sgservice/rootwrap.d/
+#%attr(-, root, sgservice) %{_datadir}/sgservice/sgservice-dist.conf
 
 %dir %attr(0750, sgservice, root) %{_localstatedir}/log/sgservice
 %dir %attr(0755, sgservice, root) %{_localstatedir}/run/sgservice
@@ -251,13 +250,13 @@ exit 0
 
 %files -n python-sgservice
 %{?!_licensedir: %global license %%doc}
-%license LICENSE
+#%license LICENSE
 %{python2_sitelib}/sgservice
 %{python2_sitelib}/sgservice-*.egg-info
 %exclude %{python2_sitelib}/sgservice/tests
 
 %files -n python-sgservice-tests
-%license LICENSE
+#%license LICENSE
 %{python2_sitelib}/sgservice/tests
 
 %changelog
