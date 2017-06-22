@@ -56,12 +56,12 @@ BuildRequires:   python-six
 BuildRequires:   python-webob
 BuildRequires:   python-oslo-i18n
 BuildRequires:   python-sqlalchemy
-BuildRequires:   grpcio
+#BuildRequires:   grpcio
 BuildRequires:   python-netifaces
 BuildRequires:   pyparsing
 BuildRequires:   python-cinderclient
 BuildRequires:   python-novaclient
-BuildRequires:   python-pymysql
+#BuildRequires:   pymysql
 BuildRequires:   python-oslo-rootwrap
 
 Requires:       python-%{pypi_name} = %{epoch}:%{version}-%{release}
@@ -128,12 +128,12 @@ Requires:       python-stevedore >= 1.5.0
 Requires:       python-suds
 Requires:       python-webob >= 1.2.3
 Requires:       pytz
-Requires:       python-grpcio >= 1.0.4
+#Requires:       grpcio >= 1.0.4
 Requires:       python-netifaces >= 0.10.5
 Requires:       pyparsing >= 2.2.0 
 Requires:       python-cinderclient >= 2.0.1
 Requires:       python-novaclient >= 7.1.0
-Requires:       pymysql >= 0.7.10
+#Requires:       pymysql >= 0.7.10
 Requires:       keystonemiddleware >= 4.2.0
 
 %description -n python-%{pypi_name}
